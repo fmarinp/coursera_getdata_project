@@ -58,22 +58,23 @@ tbl_y <- select(tbl_y,activity)
 ### Appropriately labels the data set with descriptive variable names. 
 #for activity, it's done 
 # for subject
-f
-# for the rest of the variables
-names(tbl_X_selected) <- selected_X_colnamesz 
+# for the rest of the variables - first clean up
+selected_X_colnames <- sub('\\(\\)','',selected_X_colnames)
+selected_X_colnames <- sub('-mean-','_MEAN_',selected_X_colnames)
+selected_X_colnames <- sub('-std-','_STD_',selected_X_colnames)
+names(tbl_X_selected) <- selected_X_colnames
 
 ### STEP 5:
 ### From the data set in step 4, creates a second, independent tidy data set 
 ### with the average of each variable for each activity and each subject.
 
 #first I will merge the tables to new tbl_big
-tbl_big <- bind_cols(tbl_subject,tbl_y,tbl_X)
+tbl_big <- bind_cols(tbl_subject,tbl_y,tbl_X_selected)
 #then group by subject, activity
 tbl_big <- group_by(tbl_big,subject,activity)
 #then get the mean of the other variables using summarise_each
 tbl_avg <- summarise_each(tbl_big,funs(mean))
 
-
-
-
+#write table in text file
+write.table(tbl_avg,'../tidy_data_fmarin.txt',sep=' ',row.names=FALSE)
 
